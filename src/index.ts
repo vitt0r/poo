@@ -23,13 +23,11 @@ app.addUser(user2);
 const foundUser = app.findUser('marta@mail.com');
 console.log(foundUser)
 app.registraBike(bike2);
-const bikeFind = app.returnBike(rent1,tomorrow)
 
-console.log(bikeFind)
 app.addUser(user)
 app.registraBike(bike);
-const alugaBike = app.rentBike(bike, user2, today, twoDaysFromToday);
-console.log(alugaBike)
-app.removeUser(user2)
+app.rentBike(bike, user2, today, twoDaysFromToday);
+app.returnBike(bike,user2,today,tomorrow)
+console.log(app)
 
 

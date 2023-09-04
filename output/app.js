@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 const rent_1 = require("./rent");
+const crypto_1 = __importDefault(require("crypto"));
 class App {
     constructor() {
         this.users = [];
@@ -18,6 +22,7 @@ class App {
         this.users.push(user);
     }
     registraBike(bike) {
+        bike.id = crypto_1.default.randomUUID();
         if (this.bikes.some(renBike => { return renBike.id === bike.id; })) {
             throw new Error('Bike com o mesmo ID foi registrada.');
         }
@@ -27,7 +32,7 @@ class App {
         const rentss = this.rents.filter((bikess) => bikess.bike === bike);
         const newRent = rent_1.Rent.create(rentss, bike, user, startDate, endDate);
         this.rents.push(newRent);
-        return newRent; // Retorna o objeto de aluguel criado
+        return newRent;
     }
     removeUser(user) {
         this.users = this.users.filter(existingUser => existingUser !== user);

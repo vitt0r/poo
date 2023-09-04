@@ -1,6 +1,7 @@
 import { Bike } from "./bike";
 import { Rent } from "./rent";
 import { User } from "./user";
+import crypto from "crypto";
 
 export class App {
     users: User[] = []
@@ -19,6 +20,7 @@ export class App {
     }
 
     registraBike(bike: Bike): void{
+        bike.id = crypto.randomUUID()
         if (this.bikes.some(renBike => {return renBike.id === bike.id})){
             throw new Error('Bike com o mesmo ID foi registrada.')
         }
@@ -29,7 +31,7 @@ export class App {
     const rentss = this.rents.filter((bikess) => bikess.bike === bike);
     const newRent = Rent.create(rentss, bike, user, startDate, endDate);
     this.rents.push(newRent);
-    return newRent; // Retorna o objeto de aluguel criado
+    return newRent; 
 }
 
     
@@ -39,15 +41,14 @@ export class App {
     }
     
 
-    returnBike(rentToReturn: Rent, returnDate: Date): Rent {
-        const foundRent = this.rents.find(rent => rent === rentToReturn);
-    
-        if (foundRent) {
-            foundRent.dateReturned = returnDate;
-            return foundRent; // Retorna o aluguel com a data de retorno atualizada
-        } else {
-            throw new Error('Aluguel não encontrado.');
+    returnBike(bike: Bike, user: User, startDate: Date, returnDate: Date): void{
+        var i = 0
+        for(i ; i < this.rents.length; i++){
+            if(this.rents[i].bike === bike && this.rents[i].user === user && this.rents[i].dateFrom === startDate){
+                this.rents[i].dateReturned = returnDate
+            }
         }
+
     }
     
     
