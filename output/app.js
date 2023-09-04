@@ -27,13 +27,18 @@ class App {
         const rentss = this.rents.filter((bikess) => bikess.bike === bike);
         const newRent = rent_1.Rent.create(rentss, bike, user, startDate, endDate);
         this.rents.push(newRent);
-        return newRent;
+        return newRent; // Retorna o objeto de aluguel criado
     }
     removeUser(user) {
         this.users = this.users.filter(existingUser => existingUser !== user);
     }
-    returnBike(id) {
-        return this.bikes.find(bike => { return bike.id === id; });
+    returnBike(bike, user, startDate, returnDate) {
+        var i = 0;
+        for (i; i < this.rents.length; i++) {
+            if (this.rents[i].bike === bike && this.rents[i].user === user && this.rents[i].dateFrom === startDate) {
+                this.rents[i].dateReturned = returnDate;
+            }
+        }
     }
 }
 exports.App = App;

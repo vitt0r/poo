@@ -25,12 +25,13 @@ export class App {
         this.bikes.push(bike)
     }
 
-    rentBike(bike: Bike, user: User, startDate: Date, endDate: Date): Rent {
-        const rentss = this.rents.filter((bikess) => bikess.bike === bike);
-        const newRent = Rent.create(rentss, bike, user, startDate, endDate);
-        this.rents.push(newRent);
-        return newRent;
-    }
+   rentBike(bike: Bike, user: User, startDate: Date, endDate: Date): Rent {
+    const rentss = this.rents.filter((bikess) => bikess.bike === bike);
+    const newRent = Rent.create(rentss, bike, user, startDate, endDate);
+    this.rents.push(newRent);
+    return newRent; // Retorna o objeto de aluguel criado
+}
+
     
 
     removeUser(user: User): void {
@@ -38,7 +39,17 @@ export class App {
     }
     
 
-    returnBike(id: string): Bike | undefined{
-        return this.bikes.find(bike => {return bike.id === id})
+    returnBike(rentToReturn: Rent, returnDate: Date): Rent {
+        const foundRent = this.rents.find(rent => rent === rentToReturn);
+    
+        if (foundRent) {
+            foundRent.dateReturned = returnDate;
+            return foundRent; // Retorna o aluguel com a data de retorno atualizada
+        } else {
+            throw new Error('Aluguel não encontrado.');
+        }
     }
+    
+    
+    
 }

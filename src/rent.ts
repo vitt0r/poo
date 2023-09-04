@@ -8,10 +8,10 @@ export class Rent {
         public dateFrom: Date,
         public dateTo: Date,
         public dateReturned?: Date
-    ) {}
+    ) { }
 
-    static create(rents: Rent[], bike: Bike, user: User, 
-                  startDate: Date, endDate: Date): Rent {
+    static create(rents: Rent[], bike: Bike, user: User,
+        startDate: Date, endDate: Date): Rent {
         const canCreate = Rent.canRent(rents, startDate, endDate)
         if (canCreate) return new Rent(bike, user, startDate, endDate)
         throw new Error('Overlapping dates.')
@@ -33,5 +33,13 @@ export class Rent {
         Start Date: ${this.dateFrom}
         End Date: ${this.dateTo}`;
     }
-    
+
+
+    setReturnDate(date: Date): void {
+        this.dateReturned = date;
+    }
+
+
+
+
 }

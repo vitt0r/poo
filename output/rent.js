@@ -30,5 +30,8 @@ class Rent {
         Start Date: ${this.dateFrom}
         End Date: ${this.dateTo}`;
     }
+    setReturnDate(date) {
+        this.dateReturned = date;
+    }
 }
 exports.Rent = Rent;

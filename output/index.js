@@ -21,7 +21,7 @@ app.addUser(user2);
 const foundUser = app.findUser('marta@mail.com');
 console.log(foundUser);
 app.registraBike(bike2);
-const bikeFind = app.returnBike('2');
+const bikeFind = app.returnBike(bike, user2, today, tomorrow);
 console.log(bikeFind);
 app.addUser(user);
 app.registraBike(bike);
