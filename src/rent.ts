@@ -1,45 +1,21 @@
 import { Bike } from "./bike";
+import { Time } from "./time";
 import { User } from "./user";
 
 export class Rent {
     private constructor(
         public bike: Bike,
         public user: User,
-        public dateFrom: Date,
-        public dateTo: Date,
-        public dateReturned?: Date
+        public start: Time,
+        public valor?: number,
+        public end?: Time
     ) { }
 
-    static create(rents: Rent[], bike: Bike, user: User,
-        startDate: Date, endDate: Date): Rent {
-        const canCreate = Rent.canRent(rents, startDate, endDate)
-        if (canCreate) return new Rent(bike, user, startDate, endDate)
-        throw new Error('Overlapping dates.')
+    static create(bike: Bike, user: User,start: Time): Rent {
+            return new Rent(bike, user, start);
     }
 
-    static canRent(rents: Rent[], startDate: Date, endDate: Date): boolean {
-        for (const rent of rents) {
-            if (startDate <= rent.dateTo && endDate >= rent.dateFrom) {
-                return false
-            }
-        }
-        return true
+    valorTot(star: Time, end: Time){
+        return ((end.hour*60 + end.minute) - (star.hour* 60 + star.minute))*0.3
     }
-
-    toString(): string {
-        return `Informações de aluguel:
-        User: ${this.user.name} / ${this.user.email}
-        Bike: ${this.bike.id} - ${this.bike.name}
-        Start Date: ${this.dateFrom}
-        End Date: ${this.dateTo}`;
-    }
-
-
-    setReturnDate(date: Date): void {
-        this.dateReturned = date;
-    }
-
-
-
-
 }

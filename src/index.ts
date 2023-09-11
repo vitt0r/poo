@@ -1,6 +1,7 @@
 import { App } from "./app";
 import { Bike } from "./bike";
 import { Rent } from "./rent";
+import { Time } from "./time";
 import { User } from "./user";
 
 const app = new App()
@@ -27,23 +28,25 @@ async function registerAndPrintUsers() {
         }
         // Listar os usuários
         const users = app.listUsers()
-        console.log('List of users:', users)
+        // console.log('List of users:', users)
 
         // Realizar um aluguel de bicicleta
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1)
-        const today = new Date()
-        await app.rentBike(bikeId, user.email, yesterday, today)
-        await app.returnBike(bikeId, user.email)
+        const time1 = new Time(0,0)
+        const time2 = new Time(30,1)
+        await app.rentBike(bikeId, user.email, time1)
+        const aluguel = await app.returnBike(bikeId, user.email,time2,time1)
 
         // Listar os aluguéis
         const rents = app.listRent()
-        console.log('List of rents:', rents)
+        console.log("Aluguel de bicicleta", rents)
+        console.log('valor do aluguel', aluguel)
 
 
         // Listar as bicicletas
         const bikes = app.listBikes()
-        console.log('Lista de bicicletas:', bikes)
+        // console.log('Lista de bicicletas:', bikes)
 
     } catch (error) {
         console.error('deu ruim:', error)

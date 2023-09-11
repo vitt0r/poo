@@ -3,6 +3,8 @@ import { Rent } from "./rent";
 import { User } from "./user";
 import crypto from "crypto";
 import * as bcrypt from 'bcrypt';
+import { Time } from "./time";
+import { time } from "console";
 
 export class App {
     users: User[] = []
@@ -31,7 +33,7 @@ export class App {
     }
 
 
-    rentBike(bikeId: string, userEmail: string, startDate: Date, endDate: Date): void {
+    rentBike(bikeId: string, userEmail: string, start: Time): void {
         const bike = this.bikes.find(bike => bike.id === bikeId)
         if (!bike) {
             throw new Error('Bike not found.')
@@ -40,10 +42,8 @@ export class App {
         if (!user) {
             throw new Error('User not found.')
         }
-        const bikeRents = this.rents.filter(rent =>
-            rent.bike.id === bikeId && !rent.dateReturned
-        )
-        const newRent = Rent.create(bikeRents, bike, user, startDate, endDate)
+       
+        const newRent = Rent.create(bike, user,start)
         this.rents.push(newRent)
     }
 
@@ -60,17 +60,15 @@ export class App {
 
 
 
-    returnBike(bikeId: string, userEmail: string) {
-        const today = new Date()
+    returnBike(bikeId: string, userEmail: string,returnTime: Time, start: Time): Number {
         const rent = this.rents.find(rent =>
             rent.bike.id === bikeId &&
-            rent.user.email === userEmail &&
-            rent.dateReturned === undefined &&
-            rent.dateFrom <= today
+            rent.user.email === userEmail
         )
         if (rent) {
-            rent.dateReturned = today
-            return
+            rent.end = returnTime
+            rent.valor = rent.valorTot(start, returnTime)
+            return rent.valorTot(start, returnTime)
         }
         throw new Error('Rent not found.')
     }

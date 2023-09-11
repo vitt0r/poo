@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const bike_1 = require("./bike");
+const time_1 = require("./time");
 const user_1 = require("./user");
 const app = new app_1.App();
 function registerAndPrintUsers() {
@@ -35,19 +36,21 @@ function registerAndPrintUsers() {
             }
             // Listar os usuários
             const users = app.listUsers();
-            console.log('List of users:', users);
+            // console.log('List of users:', users)
             // Realizar um aluguel de bicicleta
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
-            const today = new Date();
-            yield app.rentBike(bikeId, user.email, yesterday, today);
-            yield app.returnBike(bikeId, user.email);
+            const time1 = new time_1.Time(0, 0);
+            const time2 = new time_1.Time(30, 1);
+            yield app.rentBike(bikeId, user.email, time1);
+            const aluguel = yield app.returnBike(bikeId, user.email, time2, time1);
             // Listar os aluguéis
             const rents = app.listRent();
-            console.log('List of rents:', rents);
+            console.log("Aluguel de bicicleta", rents);
+            console.log('valor do aluguel', aluguel);
             // Listar as bicicletas
             const bikes = app.listBikes();
-            console.log('Lista de bicicletas:', bikes);
+            // console.log('Lista de bicicletas:', bikes)
         }
         catch (error) {
             console.error('deu ruim:', error);

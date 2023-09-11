@@ -42,7 +42,7 @@ class App {
         this.bikes.push(bike);
         return newId;
     }
-    rentBike(bikeId, userEmail, startDate, endDate) {
+    rentBike(bikeId, userEmail, start) {
         const bike = this.bikes.find(bike => bike.id === bikeId);
         if (!bike) {
             throw new Error('Bike not found.');
@@ -51,8 +51,7 @@ class App {
         if (!user) {
             throw new Error('User not found.');
         }
-        const bikeRents = this.rents.filter(rent => rent.bike.id === bikeId && !rent.dateReturned);
-        const newRent = rent_1.Rent.create(bikeRents, bike, user, startDate, endDate);
+        const newRent = rent_1.Rent.create(bike, user, start);
         this.rents.push(newRent);
     }
     removeUser(email) {
@@ -63,15 +62,13 @@ class App {
         }
         throw new Error('User does not exist.');
     }
-    returnBike(bikeId, userEmail) {
-        const today = new Date();
+    returnBike(bikeId, userEmail, returnTime, start) {
         const rent = this.rents.find(rent => rent.bike.id === bikeId &&
-            rent.user.email === userEmail &&
-            rent.dateReturned === undefined &&
-            rent.dateFrom <= today);
+            rent.user.email === userEmail);
         if (rent) {
-            rent.dateReturned = today;
-            return;
+            rent.end = returnTime;
+            rent.valor = rent.valorTot(start, returnTime);
+            return rent.valorTot(start, returnTime);
         }
         throw new Error('Rent not found.');
     }
