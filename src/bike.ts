@@ -8,6 +8,11 @@ export class Bike {
         public description: string,
         public ratings: number,
         public imageUrls: string[],
+        public locBike?:string,
         public id?: string
     ) {}
+
+    updateLocBike(newLocBike: string) {
+        this.locBike = newLocBike;
+    }
 }

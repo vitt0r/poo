@@ -100,5 +100,16 @@ class App {
             return false;
         });
     }
+    updateLocBike(bike, newLocBike) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const bikeToUpdate = this.bikes.find(b => b.id === bike.id);
+            if (bikeToUpdate) {
+                bikeToUpdate.updateLocBike(newLocBike);
+            }
+            else {
+                throw new Error('Não consegui :(.');
+            }
+        });
+    }
 }
 exports.App = App;

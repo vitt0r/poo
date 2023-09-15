@@ -15,6 +15,8 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1"
+    "axios": "^1.5.0",
+    "bcrypt": "^5.1.1",
+    "node-geolocation": "^1.15.14"
   }
 }

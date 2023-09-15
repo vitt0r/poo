@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bike = void 0;
 class Bike {
-    constructor(name, type, bodySize, maxLoad, rate, description, ratings, imageUrls, id) {
+    constructor(name, type, bodySize, maxLoad, rate, description, ratings, imageUrls, locBike, id) {
         this.name = name;
         this.type = type;
         this.bodySize = bodySize;
@@ -11,7 +11,11 @@ class Bike {
         this.description = description;
         this.ratings = ratings;
         this.imageUrls = imageUrls;
+        this.locBike = locBike;
         this.id = id;
+    }
+    updateLocBike(newLocBike) {
+        this.locBike = newLocBike;
     }
 }
 exports.Bike = Bike;

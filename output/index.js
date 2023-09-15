@@ -17,8 +17,10 @@ const app = new app_1.App();
 function registerAndPrintUsers() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const bike = new bike_1.Bike('caloi mountain', 'mountain bike', 100, 200, 150.5, 'My bike', 5, []);
+            const bike = new bike_1.Bike('caloi mountain', 'mountain bike', 100, 200, 150.5, 'My bike', 5, [], 'Codebikes');
+            const bike2 = new bike_1.Bike('caloi tracker', 'mountain bike', 100, 200, 150.5, 'Your Bike', 6, [], "Codebikes");
             const bikeId = app.registerBike(bike);
+            const bikeId2 = app.registerBike(bike2);
             // Registrar um usuário com senha criptografada
             const user = new user_1.User('Jose', 'jose@mail.com', '1234');
             const user1 = new user_1.User('Pedro', 'pedro@mail.com', 'senha');
@@ -45,12 +47,15 @@ function registerAndPrintUsers() {
             yield app.rentBike(bikeId, user.email, time1);
             const aluguel = yield app.returnBike(bikeId, user.email, time2, time1);
             // Listar os aluguéis
-            const rents = app.listRent();
-            console.log("Aluguel de bicicleta", rents);
-            console.log('valor do aluguel', aluguel);
+            // const rents = app.listRent()
+            // console.log("Aluguel de bicicleta", rents)
+            // console.log('valor do aluguel', aluguel)
+            const bikespre = app.listBikes();
+            console.log('Lista de bicicletas :', bikespre);
+            yield app.updateLocBike(bike, 'Pedro Tursi');
             // Listar as bicicletas
             const bikes = app.listBikes();
-            // console.log('Lista de bicicletas:', bikes)
+            console.log('Lista de bicicletas atualizadas:', bikes);
         }
         catch (error) {
             console.error('deu ruim:', error);
