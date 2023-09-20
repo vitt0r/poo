@@ -96,14 +96,16 @@ export class App {
         return this.rents;
     }
 
-    moveBikeTo(bikeId: string, location: Location): Bike | undefined {
+    moveBikeTo(bikeId: string, location: Location): Bike {
         const bike = this.bikes.find(bike => bike.id === bikeId);
         if (bike) {
             bike.location.latitude = location.latitude;
             bike.location.longitude = location.longitude;
+            return bike; 
         }
-        return bike;
+        throw new Error('Bike not found.');
     }
+    
 
     checkBike(bikeId: string): Bike | undefined {
         return this.bikes.find(bike => bike.id === bikeId);

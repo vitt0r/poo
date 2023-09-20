@@ -106,8 +106,9 @@ class App {
         if (bike) {
             bike.location.latitude = location.latitude;
             bike.location.longitude = location.longitude;
+            return bike;
         }
-        return bike;
+        throw new Error('Bike not found.');
     }
     checkBike(bikeId) {
         return this.bikes.find(bike => bike.id === bikeId);
