@@ -8,58 +8,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const bike_1 = require("./bike");
-const time_1 = require("./time");
 const user_1 = require("./user");
-const app = new app_1.App();
-function registerAndPrintUsers() {
+const sinon_1 = __importDefault(require("sinon"));
+function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        const clock = sinon_1.default.useFakeTimers();
         try {
-            const bike = new bike_1.Bike('caloi mountain', 'mountain bike', 100, 200, 150.5, 'My bike', 5, [], 'Codebikes');
-            const bike2 = new bike_1.Bike('caloi tracker', 'mountain bike', 100, 200, 150.5, 'Your Bike', 6, [], "Codebikes");
-            const bikeId = app.registerBike(bike);
-            const bikeId2 = app.registerBike(bike2);
-            // Registrar um usuário com senha criptografada
-            const user = new user_1.User('Jose', 'jose@mail.com', '1234');
-            const user1 = new user_1.User('Pedro', 'pedro@mail.com', 'senha');
-            yield app.registerUser(user);
+            const app = new app_1.App();
+            const user1 = new user_1.User('Jose', 'jose@mail.com', '1234');
             yield app.registerUser(user1);
-            const email = 'pedro@mail.com';
-            const password = 'senha';
-            // Autenticar o usuário
-            const isAuthenticated = yield app.authenticateUser(email, password);
-            if (isAuthenticated) {
-                console.log('Usuário autenticado com sucesso.');
-            }
-            else {
-                console.log('Credenciais inválidas. Autenticação falhou.');
-            }
-            // Listar os usuários
-            const users = app.listUsers();
-            // console.log('List of users:', users)
-            // Realizar um aluguel de bicicleta
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const time1 = new time_1.Time(0, 0);
-            const time2 = new time_1.Time(30, 1);
-            yield app.rentBike(bikeId, user.email, time1);
-            const aluguel = yield app.returnBike(bikeId, user.email, time2, time1);
-            // Listar os aluguéis
-            // const rents = app.listRent()
-            // console.log("Aluguel de bicicleta", rents)
-            // console.log('valor do aluguel', aluguel)
-            const bikespre = app.listBikes();
-            console.log('Lista de bicicletas :', bikespre);
-            yield app.updateLocBike(bike, 'Pedro Tursi');
-            // Listar as bicicletas
-            const bikes = app.listBikes();
-            console.log('Lista de bicicletas atualizadas:', bikes);
+            const bike = new bike_1.Bike('caloi mountainbike', 'mountain bike', 1234, 1234, 100.0, 'My bike', 5, []);
+            const bikeId = app.registerBike(bike);
+            console.log('Bike disponível: ', bike.available);
+            app.rentBike(bikeId, user1.email);
+            console.log('Bike disponível: ', bike.available);
+            // Avança o relógio em 65 minutos (65 minutos * 60 segundos)
+            clock.tick(65 * 60 * 1000);
+            // O retorno do aluguel atualiza o estado da bicicleta
+            const rentalPrice = app.returnBike(bikeId, user1.email);
+            console.log('Preço do aluguel: ', rentalPrice);
+            console.log('Bike disponível: ', bike.available);
         }
-        catch (error) {
-            console.error('deu ruim:', error);
+        finally {
+            // Restaura o relógio real quando terminar de usar o sinon.useFakeTimers()
+            clock.restore();
         }
     });
 }
-registerAndPrintUsers();
+main();

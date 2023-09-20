@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
+const crypt_1 = require("./crypt");
 const rent_1 = require("./rent");
 const crypto_1 = __importDefault(require("crypto"));
 class App {
@@ -20,20 +21,31 @@ class App {
         this.users = [];
         this.bikes = [];
         this.rents = [];
+        this.crypt = new crypt_1.Crypt();
     }
     findUser(email) {
-        return this.users.find(user => { return user.email === email; });
+        return this.users.find(user => user.email === email);
     }
     registerUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.users.some(rUser => { return rUser.email === user.email; })) {
-                throw new Error('User with the same email already registered.');
+            if (this.users.some(u => u.email === user.email)) {
+                throw new Error('Duplicate user.');
             }
-            yield user.setPassword(user.password); // Chame setPassword antes de adicionar o usuário
             const newId = crypto_1.default.randomUUID();
             user.id = newId;
+            const encryptedPassword = yield this.crypt.encrypt(user.password);
+            user.password = encryptedPassword;
             this.users.push(user);
             return newId;
+        });
+    }
+    authenticate(userEmail, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = this.findUser(userEmail);
+            if (!user) {
+                throw new Error('User not found.');
+            }
+            return yield this.crypt.compare(password, user.password);
         });
     }
     registerBike(bike) {
@@ -42,74 +54,67 @@ class App {
         this.bikes.push(bike);
         return newId;
     }
-    rentBike(bikeId, userEmail, start) {
+    removeUser(email) {
+        const userIndex = this.users.findIndex(user => user.email === email);
+        if (userIndex !== -1) {
+            this.users.splice(userIndex, 1);
+        }
+        else {
+            throw new Error('User does not exist.');
+        }
+    }
+    rentBike(bikeId, userEmail) {
         const bike = this.bikes.find(bike => bike.id === bikeId);
         if (!bike) {
             throw new Error('Bike not found.');
+        }
+        if (!bike.available) {
+            throw new Error('Unavailable bike.');
         }
         const user = this.findUser(userEmail);
         if (!user) {
             throw new Error('User not found.');
         }
-        const newRent = rent_1.Rent.create(bike, user, start);
+        bike.available = false;
+        const newRent = new rent_1.Rent(bike, user, new Date());
         this.rents.push(newRent);
     }
-    removeUser(email) {
-        const userIndex = this.users.findIndex(user => user.email === email);
-        if (userIndex !== -1) {
-            this.users.splice(userIndex, 1);
-            return;
-        }
-        throw new Error('User does not exist.');
-    }
-    returnBike(bikeId, userEmail, returnTime, start) {
+    returnBike(bikeId, userEmail) {
+        const now = new Date();
         const rent = this.rents.find(rent => rent.bike.id === bikeId &&
-            rent.user.email === userEmail);
-        if (rent) {
-            rent.end = returnTime;
-            rent.valor = rent.valorTot(start, returnTime);
-            return rent.valorTot(start, returnTime);
+            rent.user.email === userEmail &&
+            !rent.end);
+        if (!rent) {
+            throw new Error('Rent not found.');
         }
-        throw new Error('Rent not found.');
+        rent.end = now;
+        rent.bike.available = true;
+        const hours = this.diffHours(rent.end, rent.start);
+        return hours * rent.bike.rate;
     }
     listUsers() {
-        if (this.users.length === 0) {
-            throw new Error("Nenhum usuário cadastrado");
-        }
         return this.users;
     }
-    listRent() {
-        if (this.rents.length === 0) {
-            throw new Error("Nenhum aluguel cadastrado");
-        }
-        return this.rents;
-    }
     listBikes() {
-        if (this.bikes.length === 0) {
-            throw new Error("Nenhuma bike cadastrada");
-        }
         return this.bikes;
     }
-    authenticateUser(userEmail, password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = this.findUser(userEmail);
-            if (user) {
-                const passwordMatch = yield user.checkPassword(password);
-                return passwordMatch;
-            }
-            return false;
-        });
+    listRents() {
+        return this.rents;
     }
-    updateLocBike(bike, newLocBike) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const bikeToUpdate = this.bikes.find(b => b.id === bike.id);
-            if (bikeToUpdate) {
-                bikeToUpdate.updateLocBike(newLocBike);
-            }
-            else {
-                throw new Error('Não consegui :(.');
-            }
-        });
+    moveBikeTo(bikeId, location) {
+        const bike = this.bikes.find(bike => bike.id === bikeId);
+        if (bike) {
+            bike.location.latitude = location.latitude;
+            bike.location.longitude = location.longitude;
+        }
+        return bike;
+    }
+    checkBike(bikeId) {
+        return this.bikes.find(bike => bike.id === bikeId);
+    }
+    diffHours(dt2, dt1) {
+        const diff = (dt2.getTime() - dt1.getTime()) / 1000;
+        return Math.abs(diff / 3600);
     }
 }
 exports.App = App;
