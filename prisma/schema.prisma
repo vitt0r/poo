@@ -28,5 +28,5 @@ model Bike {
    imageUrls   String[]
    available   Boolean @default(true)
    location    Location @default(0.0, 0.0)
-   id?         String @id @default(uuid())
+   id         String @id @default(uuid())
 }
