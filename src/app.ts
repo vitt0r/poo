@@ -26,7 +26,7 @@ export class App {
         this.users.push(user);
         return newId;
     }
-
+        //
     async authenticate(userEmail: string, password: string): Promise<boolean> {
         const user = this.findUser(userEmail);
         if (!user) {
